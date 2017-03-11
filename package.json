@@ -1,0 +1,24 @@
+{
+  "name": "express-postgres-sp",
+  "version": "0.0.0",
+  "description": "Express middleware to provide an HTTP interface to PostgreSQL Stored Procedures",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test/test.js"
+  },
+  "keywords": [
+    "express",
+    "postgres",
+    "postgresql",
+    "database",
+    "db"
+  ],
+  "author": "Gianluca Nitti",
+  "license": "MIT",
+  "dependencies": {
+    "pg": "^6.1.4"
+  },
+  "devDependencies": {
+    "express": "^4.15.2"
+  }
+}
