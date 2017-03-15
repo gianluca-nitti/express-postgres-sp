@@ -7,9 +7,8 @@ const expressPostgres = require('../index.js')({
   "port": 5432,
   "max": 10,
   "idleTimeoutMillis": 30000
-}
-);
+});
 
-app.use('/db', expressPostgres);
+app.use('/db', expressPostgres({inputMode: 'query'}));
 
-app.listen(8000, () => {console.log('Server started.');});
+app.listen(8000, () => console.log('Server started.'));

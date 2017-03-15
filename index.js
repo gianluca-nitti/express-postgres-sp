@@ -1,42 +1,56 @@
 const pg = require('pg');
 const path = require('path');
+const inputUtil = require('./inputUtil');
+const outputUtil = require('./outputUtil');
+
+const sqlFilter = (s) => s.replace(/[^a-zA-Z0-9_]/g, '');
 
 module.exports = (dbConfig) => {
   const pgPool = new pg.Pool(dbConfig);
-  console.log(pgPool);
 
-  return (req, res, next) => {
+  return (middlewareConfig) => {
 
-    const spName = path.basename(req.path); //TODO filter invalid chars
-    const spArgs = req.query;//req.body; //map argument names to argument values //TODO choose between query, body and args
+    if(!middlewareConfig)
+      middlewareConfig = {};
+    if(middlewareConfig.reqToSPName === undefined)
+      middlewareConfig.reqToSPName = (req) => path.basename(req.path);
+    middlewareConfig.inputMode = inputUtil(middlewareConfig.inputMode);
+    middlewareConfig.outputMode = outputUtil(middlewareConfig.outputMode);
 
-    let queryText = 'SELECT * FROM ' + spName + '(';
-    let queryArgs = [];
-    let i = 1;
-    for(let k in spArgs){
-      queryText += (i != 1 ? ',' : '') + k + ':=$' + i;
-      queryArgs.push(spArgs[k]);
-      i++;
-    }
-    queryText += ');';
+    return (req, res, next) => {
 
-    console.log(queryText);
-    console.log(queryArgs);
+      const spName = middlewareConfig.reqToSPName(req);
+      const spArgs = middlewareConfig.inputMode(req); //map argument names to argument values
 
-    pgPool.connect(function(err, client, done) {
-      if(err) {
-        res.status(500).send('<h1>Internal Server Error</h1>');
-      }else{
-        client.query(queryText, queryArgs, function(err, result) {
-          done(err);
-          if(err) {
-            res.status(500).send('<h1>Error executing query</h1>'); //TODO handle error and show message
-          }else{
-            res.json(result);
-          }
-        });
+      let queryText = 'SELECT * FROM ' + sqlFilter(spName) + '(';
+      let queryArgs = [];
+      let i = 1;
+      for(let k in spArgs){
+        queryText += (i != 1 ? ',' : '') + sqlFilter(k) + ':=$' + i;
+        queryArgs.push(spArgs[k]);
+        i++;
       }
-    });
+      queryText += ');';
+
+      console.log(queryText);
+      console.log(queryArgs);
+
+      pgPool.connect((err, client, done) => {
+        if(err) {
+          res.status(500).send('<h1>Internal Server Error</h1>');
+        }else{
+          client.query(queryText, queryArgs, (err, result) => {
+            done(err);
+            if(err) {
+              res.status(500).send('<h1>Error executing query</h1>'); //TODO handle error and show message
+            }else{
+              middlewareConfig.outputMode(spName, result, res);
+            }
+          });
+        }
+      });
+
+    };
 
   };
 
