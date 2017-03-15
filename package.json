@@ -1,7 +1,7 @@
 {
   "name": "express-postgres-sp",
   "version": "0.0.0",
-  "description": "Express middleware to provide an HTTP interface to PostgreSQL Stored Procedures",
+  "description": "Express middleware providing an HTTP interface to PostgreSQL Stored Procedures",
   "main": "index.js",
   "scripts": {
     "test": "node test/test.js"
@@ -19,6 +19,8 @@
     "pg": "^6.1.4"
   },
   "devDependencies": {
-    "express": "^4.15.2"
+    "express": "^4.15.2",
+    "express-handlebars": "^3.0.0",
+    "handlebars": "^4.0.6"
   }
 }

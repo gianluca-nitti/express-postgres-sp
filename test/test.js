@@ -1,4 +1,7 @@
+
 const app = require('express')();
+const path = require('path');
+const exphbs = require('express-handlebars');
 const expressPostgres = require('../index.js')({
   "user": "test",
   "database": "test",
@@ -9,6 +12,9 @@ const expressPostgres = require('../index.js')({
   "idleTimeoutMillis": 30000
 });
 
-app.use('/db', expressPostgres({inputMode: 'query'}));
+app.engine('handlebars', exphbs());
+app.set('view engine', 'handlebars');
+app.set('views', path.join(__dirname, 'views'));
+app.use('/db', expressPostgres({inputMode: 'query', outputMode: 'render'}));
 
 app.listen(8000, () => console.log('Server started.'));

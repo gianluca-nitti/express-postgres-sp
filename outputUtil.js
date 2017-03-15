@@ -7,14 +7,18 @@ const getAtomicResult = (result) => {
 const outRaw = (spName, result, res) => res.send(getAtomicResult(result));
 const outJsonRows = (spName, result, res) => res.json(result.rows);
 const outJsonString = (spName, result, res) => res.json(getAtomicResult(result));
-const outRender = (spName, result, res) => res.render(spName, JSON.parse(getAtomicResult(result))); //TODO alternatively pass rows
+const outRender = (spName, result, res) => {
+  const locals = JSON.parse(getAtomicResult(result));
+  if(typeof(locals) !== 'object')
+    throw 'Only results of stored procedures returning a JSON string can be rendered';
+  res.render(spName, locals);
+}; //TODO alternatively pass rows
 
 module.exports = (outputMode) => {
   switch(outputMode){
     case undefined:
     case 'raw':
       return outRaw;
-    //case undefined:
     case 'jsonRows':
       return outJsonRows;
     case 'jsonString':
