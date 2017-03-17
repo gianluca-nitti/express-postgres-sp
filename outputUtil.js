@@ -13,6 +13,8 @@ const outRender = (spName, result, res) => {
     throw 'Only results of stored procedures returning a JSON string can be rendered';
   res.render(spName, locals);
 }; //TODO alternatively pass rows
+const outRedirectUrl = (spName, result, res) => res.redirect(getAtomicResult(result));
+const outRedirectBack = (spName, result, res) => res.redirect('back');
 
 module.exports = (outputMode) => {
   switch(outputMode){
@@ -25,6 +27,10 @@ module.exports = (outputMode) => {
       return outJsonString;
     case 'render':
       return outRender;
+    case 'redirectUrl':
+      return outRedirectUrl;
+    case 'redirectBack':
+      return outRedirectBack;
     default:
       if(typeof(outputMode) !== 'function')
         throw 'Invalid outputMode "' + outputMode + '"';
