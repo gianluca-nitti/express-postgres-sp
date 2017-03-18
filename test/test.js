@@ -15,6 +15,6 @@ const expressPostgres = require('../index.js')({
 app.engine('handlebars', exphbs());
 app.set('view engine', 'handlebars');
 app.set('views', path.join(__dirname, 'views'));
-app.use('/db', expressPostgres({inputMode: 'query', outputMode: 'render'}));
+app.use('/db', expressPostgres({inputMode: 'query', outputMode: 'renderFromJson'}));
 
 app.listen(8000, () => console.log('Server started.'));
