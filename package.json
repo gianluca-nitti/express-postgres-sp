@@ -4,7 +4,7 @@
   "description": "Express middleware providing an HTTP interface to PostgreSQL Stored Procedures",
   "main": "index.js",
   "scripts": {
-    "test": "node test/test.js"
+    "test": "tap test/test.js"
   },
   "keywords": [
     "express",
@@ -21,6 +21,8 @@
   "devDependencies": {
     "express": "^4.15.2",
     "express-handlebars": "^3.0.0",
-    "handlebars": "^4.0.6"
+    "handlebars": "^4.0.6",
+    "supertest": "^3.0.0",
+    "tap": "^10.3.0"
   }
 }

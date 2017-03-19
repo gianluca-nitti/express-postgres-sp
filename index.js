@@ -41,6 +41,7 @@ module.exports = (dbConfig) => {
         }else{
           client.query(queryText, queryArgs, (err, result) => {
             done(err);
+
             if(err) {
               res.status(500).send('<h1>Error executing query</h1>'); //TODO handle error and show message
             }else{
