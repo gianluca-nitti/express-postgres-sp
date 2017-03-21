@@ -1,0 +1,8 @@
+language: node_js
+node_js:
+  - "7"
+services:
+  - postgresql
+before_script:
+  - printf "f3aea85b68f5db1865f751bccc13aab7\nf3aea85b68f5db1865f751bccc13aab7" | createuser -dPr expresspg_test_admin -U postgres
+  - echo "CREATE DATABASE expresspg_test WITH OWNER expresspg_test_admin;" | psql
