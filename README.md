@@ -1,5 +1,6 @@
-# express-postgres-sp
-This is an [Express](https://expressjs.com/) middleware which can be used to provide an HTTP interface to [Stored Procedures](https://www.postgresql.org/docs/current/static/xplang.html) defined in a [PostgreSQL](https://www.postgresql.org) relational database.
+# express-postgres-sp [![Build Status](https://travis-ci.org/gianluca-nitti/express-postgres-sp.svg?branch=master)](https://travis-ci.org/gianluca-nitti/express-postgres-sp)
+
+This is an [Express](https://expressjs.com/) middleware which provides an HTTP interface to [Stored Procedures](https://www.postgresql.org/docs/current/static/xplang.html) defined in a [PostgreSQL](https://www.postgresql.org) relational database.
 
 In other words, you can code your application's *business logic* inside the DBMS (using any language supported by Postgres like [PL/pgSQL](https://www.postgresql.org/docs/current/static/plpgsql.html), [PL/Tcl](https://www.postgresql.org/docs/current/static/pltcl.html), [PL/Perl](https://www.postgresql.org/docs/current/static/plperl.html) and [PL/Python](https://www.postgresql.org/docs/current/static/plpython.html); see [here](https://www.postgresql.org/docs/current/static/xplang-install.html) for more details) and use this module to automatically map certain HTTP requests to your Express applications to these functions.
 

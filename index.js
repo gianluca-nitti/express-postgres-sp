@@ -3,7 +3,13 @@ const path = require('path');
 const inputUtil = require('./inputUtil');
 const outputUtil = require('./outputUtil');
 
-const sqlFilter = (s) => s.replace(/[^a-zA-Z0-9_]/g, '');
+const isBool = x => x === true || x === false;
+const sqlFilter = s => s.replace(/[^a-zA-Z0-9_]/g, '');
+
+const errMap = { //source: https://www.postgresql.org/docs/current/static/errcodes-appendix.html
+  '42883': 404, //undefined_function
+  '42501': 403 //insufficient_privilege
+};
 
 module.exports = (dbConfig) => {
   const pgPool = new pg.Pool(dbConfig);
@@ -16,6 +22,14 @@ module.exports = (dbConfig) => {
       middlewareConfig.reqToSPName = (req) => path.basename(req.path);
     middlewareConfig.inputMode = inputUtil(middlewareConfig.inputMode);
     middlewareConfig.outputMode = outputUtil(middlewareConfig.outputMode);
+    if(!isBool(middlewareConfig.hideUnallowed)){
+      middlewareConfig.hideUnallowed = true;
+      console.log('WARNING: middlewareConfig.hideUnallowed not specified, defaulting to true (requests to URLs mapped to procedures for which the application role hasn\'t EXECUTE privileges will result in 404 instead of 403)');
+    }
+    if(!isBool(middlewareConfig.endOnError)){
+      console.log('WARNING: middlewareConfig.endOnError not specified, defaulting to true (on error, responses will be sent with just the error code and no content, next() won\'t be called)');
+      middlewareConfig.endOnError = true;
+    }
 
     return (req, res, next) => {
 
@@ -38,12 +52,21 @@ module.exports = (dbConfig) => {
 
       pgPool.connect((err, client, done) => {
         if(err) {
-          res.status(500).send('<h1>Internal Server Error</h1>');
+          res.status(500).send('Internal Server Error');
         }else{
           client.query(queryText, queryArgs, (err, result) => {
             done(err);
             if(err) {
-              res.status(500).send('<h1>Error executing query</h1>'); //TODO handle error and show message
+              let errCode = errMap[err.code];
+              if(!errCode)
+                errCode = 500;
+              else if(errCode === 403 && middlewareConfig.hideUnallowed)
+                errCode = 404;
+              res.status(errCode);
+              if(middlewareConfig.endOnError)
+                res.end();
+              else
+                next();
             }else{
               middlewareConfig.outputMode(spName, result, res);
             }

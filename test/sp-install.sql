@@ -9,6 +9,12 @@ CREATE OR REPLACE FUNCTION plusOne(num INT) RETURNS INT AS $$
   END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION youCantCallThis() RETURNS INT AS $$ -- no GRANT EXECUTE is done on this one
+  BEGIN
+    RETURN 0;
+  END;
+$$ LANGUAGE plpgsql;
+
 REVOKE ALL ON ALL FUNCTIONS IN SCHEMA expresspg_test FROM PUBLIC;
 DROP ROLE IF EXISTS expresspg_test_app;
 CREATE ROLE expresspg_test_app NOINHERIT LOGIN PASSWORD 'test';

@@ -18,14 +18,9 @@ const expressPostgres = require('../index.js')({
 app.engine('handlebars', exphbs());
 app.set('view engine', 'handlebars');
 app.set('views', path.join(__dirname, 'views'));
-app.use('/db', expressPostgres({inputMode: 'query', outputMode: 'raw'}));
-
-/*const checkTest = description => (err, res) => {
-  if(err)
-    tap.fail('Test "' + description + '" failed with: ' + err.message);
-  else
-    tap.pass('Test "' + description + '" passed');
-};*/
+app.use('/db1', expressPostgres({inputMode: 'query', outputMode: 'raw', hideUnallowed: false, endOnError: true}));
+app.use('/db2', expressPostgres({inputMode: 'query', outputMode: 'raw', hideUnallowed: false, endOnError: false}));
+app.use('/db2', (req, res, next) => res.send('A ' + res.statusCode + ' error has occurred'));
 
 tap.plan(testFunctions.length);
 
