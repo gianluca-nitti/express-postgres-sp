@@ -4,7 +4,7 @@
   "description": "Express middleware providing an HTTP interface to PostgreSQL Stored Procedures",
   "main": "index.js",
   "scripts": {
-    "test": "tap test/test.js"
+    "test": "tap test/test.js --coverage"
   },
   "keywords": [
     "express",

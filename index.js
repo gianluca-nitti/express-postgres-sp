@@ -11,30 +11,45 @@ const errMap = { //source: https://www.postgresql.org/docs/current/static/errcod
   '42501': 403 //insufficient_privilege
 };
 
+const processIOModes = (config, keepUndefined) => {
+  if(!keepUndefined || config.inputMode !== undefined)
+    config.inputMode = inputUtil(config.inputMode);
+  if(!keepUndefined || config.outputMode !== undefined)
+    config.outputMode = outputUtil(config.outputMode);
+};
+
 module.exports = (dbConfig) => {
   const pgPool = new pg.Pool(dbConfig);
 
-  return (middlewareConfig) => {
+  return (globalConfig, spConfigList) => {
 
-    if(!middlewareConfig)
-      middlewareConfig = {};
-    if(middlewareConfig.reqToSPName === undefined)
-      middlewareConfig.reqToSPName = (req) => path.basename(req.path);
-    middlewareConfig.inputMode = inputUtil(middlewareConfig.inputMode);
-    middlewareConfig.outputMode = outputUtil(middlewareConfig.outputMode);
-    if(!isBool(middlewareConfig.hideUnallowed)){
-      middlewareConfig.hideUnallowed = true;
-      console.log('WARNING: middlewareConfig.hideUnallowed not specified, defaulting to true (requests to URLs mapped to procedures for which the application role hasn\'t EXECUTE privileges will result in 404 instead of 403)');
+    if(!globalConfig)
+      globalConfig = {};
+    if(globalConfig.reqToSPName === undefined)
+      globalConfig.reqToSPName = (req) => path.basename(req.path);
+      processIOModes(globalConfig, false);
+    if(!isBool(globalConfig.hideUnallowed)){
+      globalConfig.hideUnallowed = true;
+      console.log('WARNING: globalConfig.hideUnallowed not specified, defaulting to true (requests to URLs mapped to procedures for which the application role hasn\'t EXECUTE privileges will result in 404 instead of 403)');
     }
-    if(!isBool(middlewareConfig.endOnError)){
-      console.log('WARNING: middlewareConfig.endOnError not specified, defaulting to true (on error, responses will be sent with just the error code and no content, next() won\'t be called)');
-      middlewareConfig.endOnError = true;
+    if(!isBool(globalConfig.endOnError)){
+      console.log('WARNING: globalConfig.endOnError not specified, defaulting to true (on error, responses will be sent with just the error code and no content, next() won\'t be called)');
+      globalConfig.endOnError = true;
     }
+    if(spConfigList === undefined)
+      spConfigList = {};
+    for(let spName in spConfigList)
+      processIOModes(spConfigList[spName], true);
 
     return (req, res, next) => {
 
-      const spName = middlewareConfig.reqToSPName(req);
-      const spArgs = middlewareConfig.inputMode(req); //map argument names to argument values
+      const spName = globalConfig.reqToSPName(req);
+      let config = {};
+      if(spConfigList[spName] === undefined)
+        config = globalConfig;
+      else
+        Object.assign(config, globalConfig, spConfigList[spName]);
+      const spArgs = config.inputMode(req); //map argument names to argument values
 
       let queryText = 'SELECT * FROM ' + sqlFilter(spName) + '(';
       let queryArgs = [];
@@ -53,6 +68,7 @@ module.exports = (dbConfig) => {
       pgPool.connect((err, client, done) => {
         if(err) {
           res.status(500).send('Internal Server Error');
+          console.warn('ERROR: failed to connect to database: ' + err);
         }else{
           client.query(queryText, queryArgs, (err, result) => {
             done(err);
@@ -60,16 +76,15 @@ module.exports = (dbConfig) => {
               let errCode = errMap[err.code];
               if(!errCode)
                 errCode = 500;
-              else if(errCode === 403 && middlewareConfig.hideUnallowed)
+              else if(errCode === 403 && config.hideUnallowed)
                 errCode = 404;
               res.status(errCode);
-              if(middlewareConfig.endOnError)
+              if(config.endOnError)
                 res.end();
               else
                 next();
-            }else{
-              middlewareConfig.outputMode(spName, result, res);
-            }
+            }else
+              config.outputMode(spName, result, res);
           });
         }
       });

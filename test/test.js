@@ -27,6 +27,13 @@ app.use('/query_raw_customErr', expressPostgres({inputMode: 'query', outputMode:
 app.use('/query_raw_customErr', (req, res, next) => res.send('A ' + res.statusCode + ' error has occurred'));
 app.use('/body_raw', expressPostgres({inputMode: 'body', outputMode: 'raw', hideUnallowed: false, endOnError: true}));
 app.use('/customReqToSPName', expressPostgres({reqToSPName: (req) => req.path,inputMode: 'query', outputMode: 'raw', hideUnallowed: false, endOnError: true}));
+const spConfigs = {
+  'getSomeJson': {outputMode: 'jsonString'},
+  'getRow': {outputMode: 'jsonRow'},
+  'getTable': {outputMode: 'jsonTable'},
+  'sub': {outputMode: 'jsonRawResult'}
+};
+app.use('/overriddenConfig', expressPostgres({inputMode: 'query', outputMode: 'raw', hideUnallowed: false, endOnError: true}, spConfigs));
 
 tap.plan(testFunctions.length);
 

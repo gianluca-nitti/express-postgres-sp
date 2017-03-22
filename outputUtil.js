@@ -11,7 +11,7 @@ const getSingleRowResult = (result) => {
 };
 
 const outRaw = (spName, result, res) => res.send(getAtomicResult(result));
-const outJsonString = (spName, result, res) => res.json(getAtomicResult(result));
+const outJsonString = (spName, result, res) => res.json(JSON.parse(getAtomicResult(result)));
 const outJsonRow = (spName, result, res) => res.json(getSingleRowResult(result));
 const outJsonTable = (spName, result, res) => res.json(result.rows);
 const outJsonRawResult = (spName, result, res) => res.json(result);
