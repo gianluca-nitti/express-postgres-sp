@@ -3,9 +3,9 @@ CREATE SCHEMA expresspg_test;
 
 SET search_path TO 'expresspg_test';
 
-CREATE OR REPLACE FUNCTION plusOne(num INT) RETURNS INT AS $$
+CREATE OR REPLACE FUNCTION sub(n1 INT, n2 INT) RETURNS INT AS $$
   BEGIN
-    RETURN num+1;
+    RETURN n1 - n2;
   END;
 $$ LANGUAGE plpgsql;
 
@@ -23,4 +23,4 @@ GRANT CONNECT ON DATABASE expresspg_test TO expresspg_test_app;
 GRANT USAGE ON SCHEMA expresspg_test TO expresspg_test_app;
 REVOKE ALL ON ALL FUNCTIONS IN SCHEMA expresspg_test FROM expresspg_test_app;
 
-GRANT EXECUTE ON FUNCTION plusOne(INT) TO expresspg_test_app;
+GRANT EXECUTE ON FUNCTION sub(INT, INT) TO expresspg_test_app;
