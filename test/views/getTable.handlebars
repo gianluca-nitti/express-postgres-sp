@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h1>Users</h1>
+    <ul>
+      {{#each rows}}
+      <li>id={{id}},userid={{userid}},email={{email}}{{#if isloggedin}},loggedin{{/if}}{{#if isadmin}},admin{{/if}}</li>
+      {{/each}}
+    </ul>
+  </body>
+</html>

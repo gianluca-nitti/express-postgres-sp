@@ -34,6 +34,12 @@ const spConfigs = {
   'sub': {outputMode: 'jsonRawResult'}
 };
 app.use('/overriddenConfig', expressPostgres({inputMode: 'query', outputMode: 'raw', hideUnallowed: false, endOnError: true}, spConfigs));
+const spConfigsRender = {
+  'getSomeJson': {outputMode: 'renderFromJson'},
+  'getRow': {outputMode: 'renderFromRow'},
+  'getTable': {outputMode: 'renderFromTable'}
+};
+app.use('/html', expressPostgres({inputMode: 'query', outputMode: 'raw', hideUnallowed: false, endOnError: true}, spConfigsRender));
 
 tap.plan(testFunctions.length);
 

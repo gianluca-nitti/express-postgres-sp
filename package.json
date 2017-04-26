@@ -23,6 +23,7 @@
     "express": "^4.15.2",
     "express-handlebars": "^3.0.0",
     "handlebars": "^4.0.6",
+    "normalize-newline": "^3.0.0",
     "supertest": "^3.0.0",
     "tap": "^10.3.0"
   }
