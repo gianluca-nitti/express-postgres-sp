@@ -62,8 +62,8 @@ module.exports = (dbConfig) => {
       queryText += ');';
 
       //TODO remove
-      console.log(queryText);
-      console.log(queryArgs);
+      //console.log(queryText);
+      //console.log(queryArgs);
 
       pgPool.connect((err, client, done) => {
         if(err) {

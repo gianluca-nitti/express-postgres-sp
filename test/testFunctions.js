@@ -66,5 +66,7 @@ module.exports = [
     .expect(testRawResult).end(cb('jsonRawResult output mode')),
   (app, cb) => request(app).get('/html/getSomeJson').expect(200).expect(assertBodyEqualsNormalizeNewlines(testTemplateResultFromJson)).end(cb('render a template from a json string')),
   (app, cb) => request(app).get('/html/getRow').expect(200).expect(assertBodyEqualsNormalizeNewlines(testTemplateResultFromRow)).end(cb('render a template from a row')),
-  (app, cb) => request(app).get('/html/getTable').expect(200).expect(assertBodyEqualsNormalizeNewlines(testTemplateResultFromTable)).end(cb('render a template from a table'))
+  (app, cb) => request(app).get('/html/getTable').expect(200).expect(assertBodyEqualsNormalizeNewlines(testTemplateResultFromTable)).end(cb('render a template from a table')),
+  (app, cb) => request(app).get('/overriddenConfig/getUrl').expect(302).expect('Location', 'http://example.com').end(cb('test a redirect to URL returned from stored procedure')),
+  (app, cb) => request(app).get('/html/getUrl').set('Referer', '/test').expect(302).expect('Location', '/test').end(cb('test a redirect to URL returned from stored procedure'))
 ];

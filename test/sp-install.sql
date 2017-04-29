@@ -39,6 +39,12 @@ CREATE OR REPLACE FUNCTION getTable() RETURNS TABLE(id INT, userId TEXT, email T
   END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION getUrl() RETURNS TEXT AS $$
+  BEGIN
+    RETURN 'http://example.com';
+  END;
+$$ LANGUAGE plpgsql;
+
 REVOKE ALL ON ALL FUNCTIONS IN SCHEMA expresspg_test FROM PUBLIC;
 DROP ROLE IF EXISTS expresspg_test_app;
 CREATE ROLE expresspg_test_app NOINHERIT LOGIN PASSWORD 'test';
@@ -51,3 +57,4 @@ GRANT EXECUTE ON FUNCTION sub(INT, INT) TO expresspg_test_app;
 GRANT EXECUTE ON FUNCTION getSomeJson() TO expresspg_test_app;
 GRANT EXECUTE ON FUNCTION getRow() TO expresspg_test_app;
 GRANT EXECUTE ON FUNCTION getTable() TO expresspg_test_app;
+GRANT EXECUTE ON FUNCTION getUrl() TO expresspg_test_app;

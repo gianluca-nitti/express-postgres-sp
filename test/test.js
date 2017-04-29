@@ -31,13 +31,15 @@ const spConfigs = {
   'getSomeJson': {outputMode: 'jsonString'},
   'getRow': {outputMode: 'jsonRow'},
   'getTable': {outputMode: 'jsonTable'},
-  'sub': {outputMode: 'jsonRawResult'}
+  'sub': {outputMode: 'jsonRawResult'},
+  'getUrl': {outputMode: 'redirectUrl'}
 };
 app.use('/overriddenConfig', expressPostgres({inputMode: 'query', outputMode: 'raw', hideUnallowed: false, endOnError: true}, spConfigs));
 const spConfigsRender = {
   'getSomeJson': {outputMode: 'renderFromJson'},
   'getRow': {outputMode: 'renderFromRow'},
-  'getTable': {outputMode: 'renderFromTable'}
+  'getTable': {outputMode: 'renderFromTable'},
+  'getUrl': {outputMode: 'redirectBack'}
 };
 app.use('/html', expressPostgres({inputMode: 'query', outputMode: 'raw', hideUnallowed: false, endOnError: true}, spConfigsRender));
 
