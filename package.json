@@ -1,6 +1,6 @@
 {
   "name": "express-postgres-sp",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Express middleware providing an HTTP interface to PostgreSQL Stored Procedures",
   "main": "index.js",
   "scripts": {
@@ -26,5 +26,9 @@
     "normalize-newline": "^3.0.0",
     "supertest": "^3.0.0",
     "tap": "^10.3.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gianluca-nitti/express-postgres-sp.git"
   }
 }
