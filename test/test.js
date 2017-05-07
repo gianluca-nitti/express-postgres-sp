@@ -24,7 +24,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.use('/query_raw', expressPostgres({inputMode: 'query', outputMode: 'raw', hideUnallowed: false, endOnError: true}));
 app.use('/query_raw_customErr', expressPostgres({inputMode: 'query', outputMode: 'raw', hideUnallowed: false, endOnError: false}));
-app.use('/query_raw_customErr', (req, res, next) => res.send('A ' + res.statusCode + ' error has occurred'));
+app.use('/query_raw_customErr', (req, res, next) => res.send(res.locals.sqlError.toString()));
 app.use('/body_raw', expressPostgres({inputMode: 'body', outputMode: 'raw', hideUnallowed: false, endOnError: true}));
 app.use('/customReqToSPName', expressPostgres({reqToSPName: (req) => req.path,inputMode: 'query', outputMode: 'raw', hideUnallowed: false, endOnError: true}));
 const spConfigs = {

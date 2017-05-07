@@ -1,6 +1,6 @@
 {
   "name": "express-postgres-sp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Express middleware providing an HTTP interface to PostgreSQL Stored Procedures",
   "main": "index.js",
   "scripts": {

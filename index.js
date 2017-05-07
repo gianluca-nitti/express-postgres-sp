@@ -79,6 +79,7 @@ module.exports = (dbConfig) => {
               else if(errCode === 403 && config.hideUnallowed)
                 errCode = 404;
               res.status(errCode);
+              res.locals.sqlError = err;
               if(config.endOnError)
                 res.end();
               else
